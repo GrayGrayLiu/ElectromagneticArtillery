@@ -27,6 +27,11 @@ extern uint8_t ADS1292R_aRxBuffer[ADS1292R_RXBUFFERSIZE];
 extern float DISTANCE;
 
 void ADS1292R_DataProcessing(void);
+
 void Judge_ADS1292R_Received(void);
+
+void SerialWrite_U2(uint8_t *data, uint8_t len);
+
+void send_to_pi(float distance);
 
 #endif //USMART_RECEIVEADS1292R_H
