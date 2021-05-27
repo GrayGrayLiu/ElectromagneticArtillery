@@ -3,6 +3,8 @@
 //
 
 #include "scheduler.h"
+#include "NCMeasurement.h"
+#include "UsartScreen.h"
 
 static void Loop_1000Hz(void) //1ms执行一次
 {
@@ -48,12 +50,17 @@ static void Loop_20Hz(void) //50ms执行一次
 
 static void Loop_10Hz(void) //100ms执行一次
 {
-
 }
 
 static void Loop_5Hz(void) //200ms执行一次
 {
-
+    if(CannonMode==1)
+    {
+        if( SetServoElevation( (uint16_t)DISTANCE)==1 )
+        {
+            CannonMode=2;
+        }
+    }
 }
 
 static void Loop_2Hz(void) //500ms执行一次

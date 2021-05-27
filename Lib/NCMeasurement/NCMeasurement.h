@@ -35,7 +35,7 @@ void StepperMotorTurnAnticlockwise(void);       //逆时针转动
 void StepperMotorStop(void);                    //停转
 void StepperMotorStart(void);                   //启动
 
-void SetServoElevation(uint16_t distance);      //根据距离设定舵机仰角
+uint8_t SetServoElevation(uint16_t distance);      //根据距离设定舵机仰角
 
 void SamplingTest(void);                        //采样测试程序
 int16_t CalculateServoAngle(float distance);   //根据标靶距离计算舵机仰角

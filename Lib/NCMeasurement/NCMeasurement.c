@@ -18,10 +18,9 @@ void NCMeasurement(uint8_t cannon_mode)
         else if(CannonState==1)      //收到充电指令，调整仰角与夹角后开始充电
         {
             StepperMotorAngle_Position(InputAngle,499); //步进电机调整夹角
-
-//            HAL_Delay(1000);   //等待调整完成
+            //在任务调度器里调整舵机角度
             HAL_GPIO_WritePin(ControlRelay_GPIO_Port,ControlRelay_Pin,GPIO_PIN_RESET);     //继电器吸合，开始充电
-            CannonState=2;
+//            CannonState=2;
         }
         else if(CannonState==2)      //充电中
         {
@@ -247,7 +246,7 @@ void StepperMotorStart(void)
 }
 
 //根据距离设定舵机仰角
-void SetServoElevation(uint16_t distance)
+uint8_t SetServoElevation(uint16_t distance)
 {
     static int16_t Angle=0;
     static uint8_t State=0;   //设定舵机角度标志位 0:未开始设置  1:开始设置 2:设置中 3:设置完成
@@ -256,12 +255,13 @@ void SetServoElevation(uint16_t distance)
     {
         Angle=CalculateServoAngle(distance);
         State=1;
+        return 0;
     }
     else if(State==1)
     {
         SerialServoMove(0,Angle,0);
-        HAL_Delay(100);
         State=2;
+        return 0;
     }
     else if(State==2)
     {
@@ -270,24 +270,24 @@ void SetServoElevation(uint16_t distance)
         {
             if ((get_position[0] - Angle) > 0)
             {
-
+                SerialServoMove(0,(--Angle),0);
             }
             else if ((get_position[0] - Angle) < 0)
             {
-
+                SerialServoMove(0,(++Angle),0);
             }
         }
         else
         {
             State=3;
         }
+        return 0;
     }
     else if(State==3)
     {
         State=0;
+        return 1;
     }
-
-    SerialServoMove(0,Angle,1);
 }
 
 void SamplingTest(void)

@@ -123,7 +123,6 @@ int main(void)
       Scheduler_Run();
       SamplingTest();
       NCMeasurement(CannonMode);
-      printf("D=%.2f\r\n",DISTANCE);
 //      JudgeUsartScreenReceived();
 //      if(flag_RasPi_Receive==1)
 //      {
