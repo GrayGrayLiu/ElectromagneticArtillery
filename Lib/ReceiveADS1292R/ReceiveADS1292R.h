@@ -32,6 +32,6 @@ void Judge_ADS1292R_Received(void);
 
 void SerialWrite_U2(uint8_t *data, uint8_t len);
 
-void send_to_pi(float distance);
+void send_to_pi(int distance);
 
 #endif //USMART_RECEIVEADS1292R_H
