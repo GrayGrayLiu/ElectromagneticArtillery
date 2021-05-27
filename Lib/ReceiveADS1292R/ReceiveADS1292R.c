@@ -39,3 +39,20 @@ void Judge_ADS1292R_Received(void)
         ADS1292R_DataProcessing();
     }
 }
+
+void SerialWrite_U2(uint8_t *data, uint8_t len) {
+    while (len--) {
+        while ((USART2->SR & 0X40U) == 0);
+        USART2->DR = *data++;
+    }
+}
+
+void send_to_pi(float distance)
+{
+    uint8_t pi[3];
+    pi[0]=0XAA;
+    pi[1]=(int)distance;
+    pi[2]=0X55;
+    SerialWrite_U2(pi,3);
+}
+

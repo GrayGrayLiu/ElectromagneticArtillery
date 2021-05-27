@@ -3,7 +3,8 @@
 //
 
 #include "scheduler.h"
-
+#include "main.h"
+#include "ReceiveADS1292R.h"
 static void Loop_1000Hz(void) //1ms执行一次
 {
     //////////////////////////////////////////////////////////////////////
@@ -48,7 +49,8 @@ static void Loop_20Hz(void) //50ms执行一次
 
 static void Loop_10Hz(void) //100ms执行一次
 {
-
+    printf("D=%.2f\r\n",DISTANCE);
+    send_to_pi(DISTANCE);
 }
 
 static void Loop_5Hz(void) //200ms执行一次

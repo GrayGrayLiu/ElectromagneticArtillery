@@ -118,12 +118,14 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "EndlessLoop"
   while (1)
   {
       Scheduler_Run();
       SamplingTest();
       NCMeasurement(CannonMode);
-      printf("D=%.2f\r\n",DISTANCE);
+
 //      JudgeUsartScreenReceived();
 //      if(flag_RasPi_Receive==1)
 //      {
@@ -151,6 +153,7 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
   }
+#pragma clang diagnostic pop
   /* USER CODE END 3 */
 }
 
