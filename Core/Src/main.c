@@ -105,6 +105,7 @@ int main(void)
     HAL_UART_Receive_IT(&ScreenUart, (uint8_t *)aRxBuffer, RXBUFFERSIZE);                    //串口屏
     HAL_UART_Receive_IT(&ADS1292RUart, (uint8_t *)ADS1292R_aRxBuffer, ADS1292R_RXBUFFERSIZE);//Tof
     HAL_UART_Receive_IT(&huart5,RASPI_UART_EMPTY,18);                                   //树莓派
+    HAL_UART_Receive_IT(&SERVO_READUSART, SerialServo_usart, 8);                        //串口舵机
 
     StepperMotorStart();                                //步进电机启动（抱死状态）
 //    StepperMotorStop();                               //步进电机停止（自由状态）
@@ -125,7 +126,6 @@ int main(void)
       Scheduler_Run();
       SamplingTest();
       NCMeasurement(CannonMode);
-
 //      JudgeUsartScreenReceived();
 //      if(flag_RasPi_Receive==1)
 //      {

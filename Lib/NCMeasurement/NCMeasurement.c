@@ -17,7 +17,7 @@ void NCMeasurement(uint8_t cannon_mode)
         }
         else if(CannonState==1)      //收到充电指令，调整仰角与夹角后开始充电
         {
-            StepperMotorAngle_Position(InputAngle,499); //步进电机调整夹角
+            StepperMotorAngle_Position(InputAngle,999); //步进电机调整夹角
             //在任务调度器里调整舵机角度
             HAL_GPIO_WritePin(ControlRelay_GPIO_Port,ControlRelay_Pin,GPIO_PIN_RESET);     //继电器吸合，开始充电
 //            CannonState=2;
@@ -82,15 +82,16 @@ void StepperMotorAngle_Incremental(int32_t angle,uint16_t speed)
 //设定角度移动_位置式
 void StepperMotorAngle_Position(int32_t angle,uint16_t speed)
 {
-    SetSTEPS=(StepperMotorSubdivision*angle)/360;
-
+    NCMTIM.Instance->ARR=speed;
     if(angle>=0)
     {
-        StepperMotorSpeed(speed,1);
+        StepperMotorTurnClockwise();
+        SetSTEPS=(StepperMotorSubdivision*angle)/360;
     }
-    else
+    else if(angle<0)
     {
-        StepperMotorSpeed(speed,0);
+        StepperMotorTurnAnticlockwise();
+        SetSTEPS=(StepperMotorSubdivision*angle)/360;
     }
 }
 
@@ -249,11 +250,15 @@ void StepperMotorStart(void)
 uint8_t SetServoElevation(uint16_t distance)
 {
     static int16_t Angle=0;
-    static uint8_t State=0;   //设定舵机角度标志位 0:未开始设置  1:开始设置 2:设置中 3:设置完成
+    static int16_t AngleValue=0;
+    static uint8_t State=0;   //设定舵机角度标志位 0:未开始设置  1:开始设置 2:设置中 3:可能到达设定位置(一次确认) 4:可能到达设定位置(二次确认) 5:完成
+    static uint8_t SwitchReadWrite=0;  //切换舵机的读写 舵机的读和写需要间隔一定的时间
 
+    printf("St=%d\r\n",State);
     if(State==0)
     {
         Angle=CalculateServoAngle(distance);
+        AngleValue=Angle;
         State=1;
         return 0;
     }
@@ -265,25 +270,75 @@ uint8_t SetServoElevation(uint16_t distance)
     }
     else if(State==2)
     {
-        SerialServoReadPosition(0);
-        if(  abs( get_position[0] - Angle )>1  )
+        if(SwitchReadWrite==0)
         {
-            if ((get_position[0] - Angle) > 0)
-            {
-                SerialServoMove(0,(--Angle),0);
-            }
-            else if ((get_position[0] - Angle) < 0)
-            {
-                SerialServoMove(0,(++Angle),0);
-            }
+            SerialServoReadPosition(0);
         }
-        else
+        else if(SwitchReadWrite!=0)
         {
+            printf("An=%d\r\n",Angle);
+
+            if(  abs( get_position[0] - Angle )>1  )
+            {
+                if ((get_position[0] - Angle) > 0)
+                {
+                    SerialServoMove(0,(--AngleValue),0);
+                }
+                else if ((get_position[0] - Angle) < 0)
+                {
+                    SerialServoMove(0,(++AngleValue),0);
+                }
+            }
+            else
+            {
+                State=3;
+            }
             State=3;
         }
+        SwitchReadWrite=!SwitchReadWrite;
         return 0;
     }
     else if(State==3)
+    {
+        if(SwitchReadWrite==0)
+        {
+            SerialServoReadPosition(0);
+        }
+        else
+        {
+            if(  abs( get_position[0] - Angle )<=1  )
+            {
+                State=4;
+            }
+            else
+            {
+                State=2;
+            }
+        }
+        SwitchReadWrite=!SwitchReadWrite;
+        return 0;
+    }
+    else if(State==4)
+    {
+        if(SwitchReadWrite==0)
+        {
+            SerialServoReadPosition(0);
+        }
+        else
+        {
+            if(  abs( get_position[0] - Angle )<=1  )
+            {
+                State=5;
+            }
+            else
+            {
+                State=2;
+            }
+        }
+        SwitchReadWrite=!SwitchReadWrite;
+        return 0;
+    }
+    else if(State==5)
     {
         State=0;
         return 1;
@@ -324,6 +379,14 @@ void SamplingTest(void)
 int16_t CalculateServoAngle(float distance)
 {
     int16_t Angle=0;
+    double p1,p2,p3,p4;
+
+    p1 =   -3.38e-05 ;
+    p2 =     0.02907 ;
+    p3 =      -9.165 ;
+    p4 =        1296 ;
+
+    Angle = (int16_t)(p1*distance*distance*distance + p2*distance*distance + p3*distance + p4);
 
     return Angle;
 }

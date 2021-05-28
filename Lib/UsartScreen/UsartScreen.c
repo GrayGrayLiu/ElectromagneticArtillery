@@ -50,7 +50,7 @@ void ProcessingCommands(void)
         }
         else if(number==1)
         {
-//            CannonMode=1;
+            CannonMode=1;
         }
     }
     else if(order==901)      //树莓派键盘设定距离

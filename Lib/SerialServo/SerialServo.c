@@ -95,7 +95,6 @@ void SerialServoReadPosition(uint8_t id) {
 
     SerialWrite(temp,6);
     HAL_UART_Receive_IT(&SERVO_READUSART, SerialServo_usart, 8);
-
 }
 //舵机位置读取
 

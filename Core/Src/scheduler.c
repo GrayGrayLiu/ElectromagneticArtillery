@@ -52,24 +52,31 @@ static void Loop_20Hz(void) //50ms执行一次
 
 static void Loop_10Hz(void) //100ms执行一次
 {
-    printf("D=%.2f\r\n",DISTANCE);
+//    printf("D=%.2f\r\n",DISTANCE);
     send_to_pi((int)(DISTANCE*100));
 }
 
 static void Loop_5Hz(void) //200ms执行一次
 {
-    if(CannonMode==1)
+    if(CannonMode==0)
     {
-        if( SetServoElevation( (uint16_t)DISTANCE)==1 )
+        if(CannonState==1)
         {
-            CannonMode=2;
+            if( SetServoElevation( (uint16_t)InputDistance)==1 )
+            {
+                CannonState=2;
+            }
         }
+        printf("RA=%d\r\n",get_position[0]);
+    }
+    else if(CannonMode==1)
+    {
+
     }
 }
 
 static void Loop_2Hz(void) //500ms执行一次
 {
-
 }
 
 //////////////////////////////////////////////////////////////////////
