@@ -47,15 +47,17 @@ void SerialWrite_U2(uint8_t *data, uint8_t len) {
     }
 }
 
-void send_to_pi(int distance)
+void send_to_pi(int distance,int16_t angle)
 {
-    uint8_t pi[6];
+    uint8_t pi[8];
     pi[0]=0XAA;
     pi[1]=(uint8_t)distance;
     pi[2]=(uint8_t)((distance) >> 8);
     pi[3]=(uint8_t)((distance) >> 16);
     pi[4]=(uint8_t)((distance) >> 24);
-    pi[5]=0X55;
-    SerialWrite_U2(pi,6);
+    pi[5]=(uint8_t)angle;
+    pi[6]=(uint8_t)((angle) >> 8);
+    pi[7]=0X55;
+    SerialWrite_U2(pi,8);
 }
 
