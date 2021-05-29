@@ -112,7 +112,7 @@ int main(void)
 //    StepperMotorMove(2000,499,1);
 //    while(1);
     SerialServomode(0,0,0);            //设置舵机为舵机模式
-    SerialServoMove(0,155,1);         //舵机移动
+    SerialServoMove(0,360,0);         //舵机移动
 
     Scheduler_Setup();
   /* USER CODE END 2 */

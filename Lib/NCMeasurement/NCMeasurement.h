@@ -39,6 +39,7 @@ uint8_t SetServoElevation(uint16_t distance);      //根据距离设定舵机仰
 
 void SamplingTest(void);                        //采样测试程序
 int16_t CalculateServoAngle(float distance);   //根据标靶距离计算舵机仰角
+void Wait(uint16_t Hz,uint16_t time_s,uint16_t *actions_number);      //在任务调度器中用来计时
 
 double CalculateSideLength(uint8_t shape,double distance,double pixels); //计算一维图形边长，入口参数（形状标号，与镜头距离，像素点数量）
 void TrackCentralPoint( int PitcherCentralPoint,float point_x);       //跟踪图形中心点

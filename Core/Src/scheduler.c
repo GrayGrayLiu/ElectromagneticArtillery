@@ -53,7 +53,7 @@ static void Loop_20Hz(void) //50ms执行一次
 static void Loop_10Hz(void) //100ms执行一次
 {
 //    printf("D=%.2f\r\n",DISTANCE);
-    send_to_pi((int)(DISTANCE*100),get_position[0]);
+    send_to_pi((int)DISTANCE,get_position[0]);
 }
 
 static void Loop_5Hz(void) //200ms执行一次
@@ -64,8 +64,24 @@ static void Loop_5Hz(void) //200ms执行一次
         {
             if( SetServoElevation( (uint16_t)InputDistance)==1 )
             {
-                CannonState=2;
+                CannonState=9;   //舵机调整完
             }
+        }
+        if(CannonState==9)
+        {
+            if(STEPS==SetSTEPS)
+            {
+                CannonState=2;    //舵机与步进电机调整完
+            }
+        }
+        if(CannonState==3)
+        {
+            Wait(5,2,&CannonState);
+        }
+        else if(CannonState==4)
+        {
+            SerialServoMove(0,360,0);
+            CannonState=0;
         }
         printf("RA=%d\r\n",get_position[0]);
     }

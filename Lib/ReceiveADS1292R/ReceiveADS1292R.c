@@ -27,6 +27,10 @@ void ADS1292R_DataProcessing(void)
     memcpy(str,ADS1292R_USART_RX_BUF,len);
 
     DISTANCE=atof(str)*100;                 //C语言标准库函数atof()，将字符串转换为浮点数，精度（10 000以内小数点后三位）。获取操作数。
+    if(DISTANCE>310)
+    {
+        DISTANCE-=2;
+    }
 
 //    printf("distance:%.2f\r\n",DISTANCE);
 }

@@ -36,7 +36,7 @@ void NCMeasurement(uint8_t cannon_mode)
         }
         else if(CannonState==3)      //充电完成
         {
-            CannonState=0;
+            //在任务调度器中将舵机归0后重新切换到0状态
         }
     }
     else if(cannon_mode==1)
@@ -389,6 +389,22 @@ int16_t CalculateServoAngle(float distance)
     Angle = (int16_t)(p1*distance*distance*distance + p2*distance*distance + p3*distance + p4);
 
     return Angle;
+}
+
+//在任务调度器中用来计时
+void Wait(uint16_t Hz,uint16_t time_s,uint16_t *actions_number)
+{
+    static uint16_t TimeCount=0;
+
+    if( TimeCount<(Hz*time_s) )
+    {
+        TimeCount++;
+    }
+    else
+    {
+        (*actions_number)++;
+        TimeCount=0;
+    }
 }
 
 double CalculateSideLength(uint8_t shape,double distance,double pixels)
